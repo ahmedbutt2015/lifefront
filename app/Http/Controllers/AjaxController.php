@@ -103,6 +103,7 @@ class AjaxController extends Controller
         return DB::table('cities')->get();
     }
 
+    //below function save your rule accepted information
     public function acceptRules () {
 
         $date = now()->toDateTimeString();
@@ -111,14 +112,14 @@ class AjaxController extends Controller
         ]);
         return $date;
     }
-
+// below function buy diamonds 
     public function buyDiamonds () {
         $user = auth()->user();
         $user->diamonds += 100;
         $user->save();
         return User::getUser($user->id);
     }
-
+// below function update user password
     public function updatePassword () {
         if (auth()->attempt([
             'email'    => request()->get('email'),
@@ -140,7 +141,7 @@ class AjaxController extends Controller
         return ['msg' => 'Invalid Credentials'];
 
     }
-
+// below function remove your profile if you click on index page setting tab then show option to remove your profile
     public function removeProfile () {
         $path = auth()->user()->pic;
         auth()->user()->pic = '';
@@ -151,6 +152,7 @@ class AjaxController extends Controller
         }
         return ['msg' => 'Profile Picture removed successfully'];
     }
+// below function update your profile if you click on index page setting tab then show option to update your profile
 
     public function updateProfile () {
         $username = request()->get('username');
@@ -188,6 +190,7 @@ class AjaxController extends Controller
         return ['user' => $user, 'msg' => 'Your Profile updated successfully'];
     }
 
+    //belw function get for all character setting when first time create new character then user see the option custimize own character setting
     public function getCharacterSettings () {
     //     $c= DB::table('cities')->leftJoin('languages', 'languages.id', 'cities.language_id')->select('cities.title', 'cities.slug as slug', 'languages.language_name')->get();
     //    dd($c);
@@ -232,7 +235,7 @@ class AjaxController extends Controller
             ]
         ];
     }
-
+//below function use for if user select all character setting then save the all character information
     public function saveCharacter () {
         $user = User::getUser();
         $input = request()->get('data');
@@ -251,11 +254,11 @@ class AjaxController extends Controller
         }
         return ['status' => 'ok', 'link' => "city/$ch->prefix/$ch->address", 'msg' => 'Saved'];
     }
-
+// below function get user login user. when any user login this function get only login user
     public function getUser () {
         return User::getUser(auth()->id());
     }
-
+// below function delete character 
     public function deleteCharacter () {
         $user = auth()->user();
 
@@ -271,11 +274,11 @@ class AjaxController extends Controller
 
         return User::getUser();
     }
-
+// below function show the notification
     public function getNotifications () {
         return Notification::notRead();
     }
-
+//  if user read the Notification then save the value user read the notification
     public function markNotificationRead () {
         $id = request('id');
         if ($id) {
@@ -283,7 +286,7 @@ class AjaxController extends Controller
         }
         return $this->getNotifications();
     }
-
+ // below function get all character profile information 
     public function getCharacterProfile () {
         
         $address = request('address');
@@ -317,19 +320,20 @@ class AjaxController extends Controller
         return $data;
     }
 
+     // below function  update the user selected character profile value
     public function updateCharacterProfile () {
         $character = request()->all();
         Character::addUpdate($character, $character['id']);
         return ['msg' => 'saved successfully', 'user' => User::getUser()];
     }
-
+// below function update the character Hobbies 
     public function updateCharacterHobbies () {
         $data = request()->all();
         $hobbies = implode(',', $data['hobbies']);
         Character::where('id', $data['id'])->update(['hobbies' => $hobbies]);
         return ['msg' => 'saved successfully'];
     }
-
+// below function I allow Mogalys to send me updates
     public function notificationCharacter () {
         $ch_id = request('ch_id');
         $value = request('value');
@@ -337,6 +341,7 @@ class AjaxController extends Controller
         return Character::where('id', $ch_id)->update([$column => $value]);
     }
 
+    // below function save all comment from character side
     public function saveComment () {
         $data = request()->all();
         $data['from'] = auth()->user()->character->id;
@@ -346,7 +351,7 @@ class AjaxController extends Controller
         }
         return ['msg' => 'not saved, try later'];
     }
-
+// below function  allow comment from character side
     public function allowComment () {
         $id = request('id');
         $ok = Comment::addUpdate(['allow' => 1], $id);
@@ -355,7 +360,7 @@ class AjaxController extends Controller
         }
         return ['msg' => 'not allowed, try later'];
     }
-
+// below function delete commnet 
     public function deleteComment () {
         $id = request('id');
         $ok = Comment::where('id', $id)->delete();
@@ -364,7 +369,7 @@ class AjaxController extends Controller
         }
         return ['msg' => 'not deleted, try later'];
     }
-
+// below function like commnet 
     public function likeComment () {
         $id = request('id');
         $ok = Comment::addLike($id);
@@ -375,6 +380,7 @@ class AjaxController extends Controller
         }
     }
 
+// below function check user request add friend. requested friend already your frined or not if not then add friend in user friend list
     public function addFriend () {
         $id = request('id');
         $ok = Character::addFriend($id);
@@ -385,7 +391,7 @@ class AjaxController extends Controller
             return ['status' => 'error', 'msg' => 'You already have this character in your friend list'];
         }
     }
-
+// below function user delete friend from own friend list
     public function deleteFriend () {
         $id = request('id');
         Friend::where('id', $id)->delete();
@@ -393,7 +399,7 @@ class AjaxController extends Controller
         return ['msg' => 'Friend removed successfully'];
 
     }
-
+// user rating form add friend list friend
     public function addRating () {
         $id = request('id');
         $rating = request('rating');
@@ -404,25 +410,26 @@ class AjaxController extends Controller
             return ['status' => 'error', 'msg' => 'you have already have rated this profile'];
         }
     }
-
+// below function use for get all action history
     public function getActionHistory () {
         return UserActionHistory::getUserHistory();
     }
+// below function check user own gift
     public function getMyGift () {
         return GiftNotification::myGift();
     }
-
+// below function check all family details
     public function getFamilyDetails () {
         $character = Character::getCharacterByUserId(auth()->id());
         $intimates = Intimate::getUserRequests();
 
         return compact('character', 'intimates');
     }
-
+// below function  get Marriage character list 
     public function getMarriageableCharacters () {
         return Character::getMarriageable();
     }
-
+// belew function send marriage request
     public function addMarriageRequest () {
         $id = request('id');
         $exist = UserActionHistory::existPendingMarriageRequest($id);
@@ -437,6 +444,7 @@ class AjaxController extends Controller
         }
     }
 
+    // if any user send marriage reques then you have reacive marriage request user have option accept or reject request
     public function marriageAction () {
         $do = request('do');
         $action_id = request('id');
@@ -455,7 +463,7 @@ class AjaxController extends Controller
             return ['msg' => 'Rejected successfully', 'status' => 'rejected'];
         }
     }
-
+// in family tab and in which relationship tab user can be request for intimate relation with or without condom for the partner
     public function addIntimateRequest () {
         $input = request()->all();
 
@@ -468,10 +476,11 @@ class AjaxController extends Controller
         return Intimate::getUserRequests();
     }
 
+// show the intimate request
     public function getIntimateRequests () {
         return Intimate::getUserRequests();
     }
-
+// partner accept or reject user intimati request
     public function intimateAction () {
         $do = request('do');
         $id = request('id');
@@ -507,7 +516,7 @@ class AjaxController extends Controller
             return ['msg' => 'Rejected successfully', 'status' => 'rejected'];
         }
     }
-
+// after intimate request save the childern name
     public function saveChildName () {
         $data = request()->only('first_name', 'last_name');
         $id = request('id');
@@ -515,7 +524,7 @@ class AjaxController extends Controller
         Children::addUpdate($data, $id);
         return "updated";
     }
-
+//this function show all employee list form created from different company 
     public function getEmploymentCenterDetails () {
 
         $jobList = Job::select('job_name as text', 'id as value')->where('job_type', 'Corporate')->get();
@@ -525,7 +534,7 @@ class AjaxController extends Controller
         ];
 
     }
-
+// in the employment center deatail area user can be applu for any suitable job
     public function applyForJob () {
         $offer_id = request('offer_id');
         $offer = JobOffer::find($offer_id);
@@ -542,18 +551,18 @@ class AjaxController extends Controller
         }
         return false;
     }
-
+// get all job list 
     public function getJobs () {
         if (request()->has('type')) {
             return Job::where('job_type', request('type'))->get();
         }
         return Job::all();
     }
-
+// show list which one character job find
     public function getCharactersByJob () {
         return Character::select('id as value')->selectRaw('concat(first_name," ", last_name) as text')->where('job', request('id'))->get();
     }
-
+// show the job advertiser detail for neighborhoods
     public function getAdvertiserJobDetails () {
         $id = request('job_id');
         $ch_id = request('ch_id');
@@ -569,17 +578,18 @@ class AjaxController extends Controller
             'is_doer'       => $is_doer
         ];
     }
-
+// get farmer job 
     public function getFarmerJobDetails () {
         $id = request('job_id');
         $ch_id = request('ch_id');
         $job = Job::find($id);
         $farmer = Character::where('job', $id)->where('id', $ch_id)->first();
         $is_doer = $farmer ? true : false;
+        // find preobject detail
         $animals = PreObject::getObjects($id);
+        // check post object qunatiny 
         $products = PostObject::getAll('produced_by', $id);
         $stock = FarmProduct::stock($ch_id);
-//        dd($stock->toArray());
         $inProduction = FarmProduct::InProcess($ch_id);
         return [
             'job'                => $job,
@@ -597,7 +607,7 @@ class AjaxController extends Controller
                                              ->get(),
         ];
     }
-
+// if any visitor check the farmor job 
     public function getFarmerJobDetailsForVisitor () {
         $id = request('job_id');
         $farmer_id = request('farmer');
@@ -610,7 +620,7 @@ class AjaxController extends Controller
             'farmer_animals' => FarmAnimal::getAll($farmer_id),
         ];
     }
-
+// buy the farmer job pre object like animal etc
     public function buyAnimal () {
 
         $object = PreObject::find(request('id'));
@@ -623,6 +633,7 @@ class AjaxController extends Controller
                 'animal_id' => request('id'),
                 'quantity'  => request('qty'),
             ]);
+            // after buy the pre object then finance report update automaticaly 
             FinanceReport::addUpdate([
                 'character_id' => request('farmer'),
                 'job_id'       => $character->job,
@@ -642,7 +653,7 @@ class AjaxController extends Controller
             'msg'            => $msg
         ];
     }
-
+// when farmor buy a pre object then farmer job holder convert the pre object into post object 
     public function startProduction () {
         $input = request()->all();
         $product = PostObject::findOne($input['product'], request('farmer'));
@@ -673,7 +684,7 @@ class AjaxController extends Controller
             'farmer_animals'     => FarmAnimal::getAll(request('farmer')),
         ];
     }
-
+// when former job holder request the pre object to convert post object then after this process then complete production auto add stoch in farmer product
     public function completeProduction () {
         $row = FarmProduct::find(request('stock_id'));
         $row->in_production = 0;
@@ -686,7 +697,7 @@ class AjaxController extends Controller
             'stock'              => $stock,
         ];
     }
-
+// get city detaiils check which users is online or not 
     public function getCityDetails () {
         $id = request('id');
         
@@ -697,36 +708,37 @@ class AjaxController extends Controller
             'actions'        => Action::getActions(),
         ];
     }
-
+// get all user for cantact list
     public function getContacts () {
         return Character::getForMessage();
     }
-
+// get all user for cantact list
     public function getChatDetails () {
         $ch = request('ch');
         $id = request('id');
 
         return Chat::getChatDetails($ch, $id);
     }
+// get all message detail 
     public function getMesssageDetails () {
         $ch = request('ch');
         $id = request('id');
 
         return Chat::getChatDetails($ch, $id);
     }
-     
+// check user already contact list or not 
     public function getChatDetailsalready() {
         $id = request('id');
         return Chat::getChatDetailsAll($id);
     }
-    
+// send message for selectd user
     public function sendMessage () {
         Chat::addUpdate(request()->all());
         $ch = request('from');
         $id = request('to');
         return Chat::getChatDetails($ch, $id);
     }
-
+// get restaurant job detail
     public function getRestaurantJobDetails () {
         $id = request('job_id');
         $ch_id = request('ch_id');
@@ -750,7 +762,7 @@ class AjaxController extends Controller
             'front_shop'     => RestaurantPlates::getFrontShop($ch_id),
         ];
     }
-
+// get restaurant job detail from visitor side
     public function getRestaurantJobDetailsForVisitor () {
         $id = request('job_id');
         $ch_id = request('ch_id');
@@ -763,7 +775,7 @@ class AjaxController extends Controller
             'front_shop' => RestaurantPlates::getFrontShop($ch_id),
         ];
     }
-
+// get restaurant job detail from visitor side
     public function actionFarmerOffer () {
         $action = request('action');
         $id = request('id');
@@ -775,6 +787,7 @@ class AjaxController extends Controller
             'ingredients' => PostObject::getAllWithStockForRestroKeeper($ch->job, $ch_id),
         ];
     }
+
     public function actionFarmerOfferShopKeeper () {
         $action = request('action');
         $id = request('offer.id');
