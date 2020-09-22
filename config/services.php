@@ -49,16 +49,27 @@ return [
         'redirect'      => 'http://your-callback-url',
     ],
 
-    'facebook' => [
-        'client_id'     => '657619738146445',
-        'client_secret' => 'c4801383e3a4d5aec6543d4a350dfdb0',
-        'redirect'      => 'http://life.soft-wizards.com/login/facebook/callback',
-    ],
+   'facebook' => [
+        'client_id'     => env('FB_CLIENT_ID', 'error_no_client_ID'),
+        'client_secret' => env('FB_CLIENT_SECRET', 'error_no_secret'),
+        'redirect'      => env('APP_URL') . '/login/facebook/callback',
+	],
 
-    'google' => [
-        'client_id'     => '277548075191-0mfrsoeud7hcvlgcoqar10g8lm983cfo.apps.googleusercontent.com',
-        'client_secret' => '5-06TnG7MrTMew16XkNaArFC',
-        'redirect'      => 'http://life.soft-wizards.com/login/google/callback',
-    ],
+   'linkedin' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID', 'error_no_client_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', 'error_no_secret'),
+        'redirect'      => env('APP_URL') . '/login/linkedin/callback',
+        ],
 
+   'twitter' => [
+        'client_id'       => env('GOOGLE_CLIENT_ID', 'error_no_client_ID'),
+	'client_secret'   => env('GOOGLE_CLIENT_SECRET', 'error_no_secret'),
+	'redirect'        => env('APP_URL') . '/login/twitter/callback',
+	],
+
+   'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID', 'error_no_client_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', 'error_no_secret'),
+        'redirect'      => env('APP_URL') . '/login/google/callback',
+	],
 ];
